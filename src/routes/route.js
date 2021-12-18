@@ -1,33 +1,33 @@
 const express = require('express');
 const router = express.Router();
-const accountcontroller = require('../controllers/authorController')
-const middle = require('../middleware/middleware');
 
 
-//  PHASE 1   FIRST API
-router.post('/createauthor', accountcontroller.getcreateauthor)
+const authorController = require('../controllers/authorController');
+const blogController = require('../controllers/blogController')
+const authorAuth = require('../middlewares/authorAuth')
 
-// PHASE 1   SECOND API
-router.post('/createblog', accountcontroller.getcreateblog)
 
-// PHASE 1    THIRD API
-router.get('/blogs',accountcontroller.getBlog)
+// CREATE AUTHOR API-------------1
+router.post('/authors', authorController.registerAuthor);
 
-//  PHASE 1 FOURTH API
-router.put('/blogs/:blogId', middle.middleware, accountcontroller.updateBlog)
+// GENERATE TOKEN AUTHOR API ----2
+router.post('/login', authorController.loginAuthor);
 
-//  PHASE 1 FIFTH API
-router.delete('/blogs/:blogId',middle.middleware, accountcontroller.deleteblog)
+// CREATE BLOG API---------------3
+router.post('/blogs', authorAuth, blogController.createBlog);
 
-// PHASE 1 SIXTH API
+// GET LIST OF BLOGS-------------4
+router.get('/blogs', authorAuth, blogController.listBlog);
 
-router.delete('/blogs',middle.middleware, accountcontroller.deleteupdateblog)
+// FIND BLOG DATA AND UPDATE ----5
+router.put('/blogs/:blogId', authorAuth, blogController.updateBlog);
 
-//  PHASE  FIRST API
-router.post('/login', accountcontroller.userlogin)
+// DELETE BLOG DATA BY ID-------6
+router.delete('/blogs/:blogId', authorAuth, blogController.deleteBlogByID);
 
-// PHASE 2 SECOND API
+// DELETE BLOG DATA BY PARAMS----7
+router.delete('/blogs', authorAuth, blogController.deleteBlogByParams);
 
-router.get('/userdetail/:userid', middle.middleware, accountcontroller.getuserdetail)
 
-module.exports = router
+
+module.exports = router;
