@@ -9,7 +9,7 @@ const isValid = function (value) {
 }
 //--------------ISVALIDTITLE FUNCTION 
 const isValidTitle = function (title) {
-    return ['Mr', 'Mrs', 'Miss', 'Mast'].indexOf(title) !== -1
+    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
 }
 //--------------------ISVALIDREQUESTBODY FUNCTION 
 const isValidRequestBody = function (requestBody) {
@@ -45,7 +45,7 @@ const registerAuthor = async function (req, res) {
         }
 
         if (!isValidTitle(title.trim())) {
-            res.status(400).send({ status: false, message: `Title should be among Mr, Mrs, Miss and Mast` })
+            res.status(400).send({ status: false, message: `Title should be among Mr, Mrs, Miss ` })
             return
         }
 
@@ -64,10 +64,10 @@ const registerAuthor = async function (req, res) {
             return
         }
 
-        const isEmailAlreadyUsed = await authorModel.findOne({ email }); // {email: email} object shorthand property
+        const isEmailAlreadyUsed = await authorModel.findOne({ email }); 
 
         if (isEmailAlreadyUsed) {
-            res.status(400).send({ status: false, message: `${email} email address is already registered` })
+            res.status(400).send({ status: false, message: "Email address is already registered,Try different One" })
             return
         }
         // VALIDATION ENDS
@@ -75,12 +75,13 @@ const registerAuthor = async function (req, res) {
         const authorData = { fname, lname, title, email, password }
         // CREATE AUTHOR
         const newAuthor = await authorModel.create(authorData);
-
         res.status(201).send({ status: true, message: `Author created successfully`, data: newAuthor });
     } catch (error) {
         res.status(500).send({ status: false, message: error.message });
     }
 }
+
+
 
 
 // GENERATE TOKEN AUTHOR SECOND API ----2
@@ -100,16 +101,16 @@ const loginAuthor = async function (req, res) {
             res.status(400).send({ status: false, message: `Email is required` })
             return
         }
-        const EMAIL = email.trim()
-        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(EMAIL))) {
+    
+        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.trim()))) {
             res.status(400).send({ status: false, message: `Email should be a valid email address` })
             return
         }
-        const PASSWORD = password.trim()
-        if (!isValid(PASSWORD)) {
+        if (!isValid(password.trim())) {
             res.status(400).send({ status: false, message: `Password is required` })
             return
         }
+       
         // VALIDATION ENDS
         // FIND AUTHOR DETAIL
         const author = await authorModel.findOne({ email, password });
@@ -122,9 +123,7 @@ const loginAuthor = async function (req, res) {
         // GENERATE JWT TOKEN
         const token = await jwt.sign({
             authorId: author._id,
-            iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60
-        }, 'someverysecuredprivatekey291@(*#*(@(@()')
+        }, 'someverysecuredprivatekey')
 
         res.header('x-api-key', token);
         res.status(200).send({ status: true, message: `Author login successfull`, data: { token } });

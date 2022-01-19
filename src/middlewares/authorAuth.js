@@ -8,7 +8,7 @@ const autherAuth = async (req, res, next) => {
             return;
         }
 
-        const decoded = await jwt.verify(token, 'someverysecuredprivatekey291@(*#*(@(@()')
+        const decoded = await jwt.verify(token, 'someverysecuredprivatekey')
 
         if(!decoded) {
             res.status(403).send({status: false, message: `Invalid authentication token in request`})
